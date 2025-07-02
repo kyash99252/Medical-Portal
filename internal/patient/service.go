@@ -24,9 +24,10 @@ func NewService(r Repository) Service {
 
 func (s *service) CreatePatient(ctx context.Context, req CreatePatientRequest) (*Patient, error) {
 	p := &Patient{
-		Name:    req.Name,
-		Age:     req.Age,
-		Address: req.Address,
+		Name:        req.Name,
+		Age:         req.Age,
+		Address:     req.Address,
+		PhoneNumber: req.PhoneNumber,
 	}
 	err := s.repo.Create(ctx, p)
 	if err != nil {
@@ -45,10 +46,11 @@ func (s *service) ListAllPatients(ctx context.Context) ([]Patient, error) {
 
 func (s *service) UpdatePatient(ctx context.Context, id int, req UpdatePatientRequest) (*Patient, error) {
 	p := &Patient{
-		ID:      id,
-		Name:    req.Name,
-		Age:     req.Age,
-		Address: req.Address,
+		ID:          id,
+		Name:        req.Name,
+		Age:         req.Age,
+		Address:     req.Address,
+		PhoneNumber: req.PhoneNumber,
 	}
 	err := s.repo.Update(ctx, p)
 	if err != nil {
