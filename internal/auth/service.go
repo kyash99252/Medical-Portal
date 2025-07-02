@@ -22,7 +22,7 @@ type Service interface {
 }
 
 type service struct {
-	repo Repository
+	repo         Repository
 	jwtSecretKey string
 }
 
@@ -47,10 +47,10 @@ func (s *service) Login(ctx context.Context, username, password string) (string,
 
 	// Create JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID,
+		"sub":  user.ID,
 		"user": user.Username,
 		"role": user.Role,
-		"exp": time.Now().Add(time.Hour * 72).Unix(),
+		"exp":  time.Now().Add(time.Hour * 72).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(s.jwtSecretKey))
