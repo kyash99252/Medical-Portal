@@ -37,7 +37,7 @@ export default function LoginPage() {
         const decoded = jwtDecode(data.token)
 
         localStorage.setItem("token", data.token)
-        localStorage.setItem("user", JSON.stringify(decoded)) // ✅ now user exists!
+        localStorage.setItem("user", JSON.stringify(decoded))
 
         toast({
           title: "Login successful",

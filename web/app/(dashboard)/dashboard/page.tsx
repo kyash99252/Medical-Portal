@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, FileText, Pill, Calendar } from "lucide-react"
+import Link from "next/link"
 
 interface DashboardStats {
   totalPatients: number
@@ -148,23 +149,30 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: "Add Patient", icon: Users, href: "/patients/new" },
-                { label: "View Patients", icon: FileText, href: "/patients" },
-                { label: "Upload Document", icon: FileText, href: "/documents/upload" },
-                { label: "Settings", icon: Calendar, href: "/settings" },
-              ].map((action, index) => {
-                const Icon = action.icon
-                return (
-                  <button
-                    key={index}
-                    className="p-4 rounded-lg border border-gray-200 hover:bg-gradient-to-r hover:from-teal-50 hover:to-emerald-50 hover:border-teal-200 transition-all duration-200 text-left"
-                  >
-                    <Icon className="h-5 w-5 text-teal-600 mb-2" />
-                    <p className="text-sm font-medium text-slate-800">{action.label}</p>
-                  </button>
-                )
-              })}
+              <Link href="/patients/new">
+                <div className="p-4 rounded-lg border border-gray-200 hover:bg-gradient-to-r hover:from-teal-50 hover:to-emerald-50 hover:border-teal-200 transition-all duration-200 text-left cursor-pointer">
+                  <Users className="h-5 w-5 text-teal-600 mb-2" />
+                  <p className="text-sm font-medium text-slate-800">Add Patient</p>
+                </div>
+              </Link>
+              <Link href="/patients">
+                <div className="p-4 rounded-lg border border-gray-200 hover:bg-gradient-to-r hover:from-teal-50 hover:to-emerald-50 hover:border-teal-200 transition-all duration-200 text-left cursor-pointer">
+                  <FileText className="h-5 w-5 text-teal-600 mb-2" />
+                  <p className="text-sm font-medium text-slate-800">View Patients</p>
+                </div>
+              </Link>
+              <Link href="/documents/upload">
+                <div className="p-4 rounded-lg border border-gray-200 hover:bg-gradient-to-r hover:from-teal-50 hover:to-emerald-50 hover:border-teal-200 transition-all duration-200 text-left cursor-pointer">
+                  <FileText className="h-5 w-5 text-teal-600 mb-2" />
+                  <p className="text-sm font-medium text-slate-800">Upload Document</p>
+                </div>
+              </Link>
+              <Link href="/settings">
+                <div className="p-4 rounded-lg border border-gray-200 hover:bg-gradient-to-r hover:from-teal-50 hover:to-emerald-50 hover:border-teal-200 transition-all duration-200 text-left cursor-pointer">
+                  <Calendar className="h-5 w-5 text-teal-600 mb-2" />
+                  <p className="text-sm font-medium text-slate-800">Settings</p>
+                </div>
+              </Link>
             </div>
           </CardContent>
         </Card>

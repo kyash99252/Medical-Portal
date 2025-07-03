@@ -30,7 +30,7 @@ func (r *postgresRepository) Create(ctx context.Context, p *Prescription) error 
 // GetByPatientID retrieves all prescriptions for a given patient from the database
 func (r *postgresRepository) GetByPatientID(ctx context.Context, patientID int) ([]Prescription, error) {
 	var prescriptions []Prescription
-	query := `SELECT id, patient_id, doctor_id, medication, dosage_frequency, notes, created_at FROM prescriptions WHERE patient_id = $1 ORDER BY created_at DESC`
+	query := `SELECT id, patient_id, doctor_id, medication, dosage, frequency, notes, created_at FROM prescriptions WHERE patient_id = $1 ORDER BY created_at DESC`
 
 	err := r.db.SelectContext(ctx, &prescriptions, query, patientID)
 	if err != nil {

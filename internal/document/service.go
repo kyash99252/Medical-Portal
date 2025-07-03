@@ -2,6 +2,7 @@ package document
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"mime/multipart"
 
@@ -25,34 +26,48 @@ func NewService(r Repository, cld *cloudinary.Cloudinary) Service {
 }
 
 func (s *service) UploadDocument(ctx context.Context, patientID int, fileHeader *multipart.FileHeader) (*Document, error) {
+	log.Println("📥 Starting document upload for patient:", patientID)
+	log.Println("📄 File received:", fileHeader.Filename)
+
 	file, err := fileHeader.Open()
 	if err != nil {
+		log.Println("❌ Failed to open uploaded file:", err)
 		return nil, err
 	}
 	defer file.Close()
 
 	uploadParams := uploader.UploadParams{
-		Folder: "patient_documents",
+		PublicID:     fmt.Sprintf("patient_docs/patient_%d/%s", patientID, fileHeader.Filename),
+		Folder:       "patient_documents",
 		ResourceType: "auto",
 	}
+	log.Println("🚀 Uploading to Cloudinary with PublicID:", uploadParams.PublicID)
 
 	uploadResult, err := s.cloudinary.Upload.Upload(ctx, file, uploadParams)
 	if err != nil {
+		log.Println("❌ Cloudinary upload failed:", err)
 		return nil, err
 	}
+
+	log.Println("✅ Upload successful")
+	log.Println("🔗 File URL:", uploadResult.SecureURL)
+	log.Println("🆔 Cloudinary Public ID:", uploadResult.PublicID)
 
 	doc := &Document{
 		PatientID: patientID,
-		FileName: fileHeader.Filename,
-		FileURL: uploadResult.SecureURL,
-		PublicID: uploadResult.PublicID,
-		MimeType: fileHeader.Header.Get("Content-Type"),
+		FileName:  fileHeader.Filename,
+		FileURL:   uploadResult.SecureURL,
+		PublicID:  uploadResult.PublicID,
+		MimeType:  fileHeader.Header.Get("Content-Type"),
 	}
 
 	if err := s.repo.Create(ctx, doc); err != nil {
+		log.Println("❌ Failed to save document to DB. Rolling back Cloudinary upload.")
 		s.cloudinary.Upload.Destroy(ctx, uploader.DestroyParams{PublicID: doc.PublicID})
 		return nil, err
 	}
+
+	log.Println("📄 Document metadata saved to DB successfully.")
 	return doc, nil
 }
 

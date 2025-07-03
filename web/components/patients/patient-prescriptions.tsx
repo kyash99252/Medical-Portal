@@ -28,7 +28,6 @@ interface Prescription {
   instructions: string
   prescribedBy: string
   prescribedAt: string
-  status: "active" | "completed" | "discontinued"
 }
 
 interface PatientPrescriptionsProps {
@@ -70,7 +69,6 @@ export function PatientPrescriptions({ patientId }: PatientPrescriptionsProps) {
             instructions: "Take with food in the morning",
             prescribedBy: "Dr. Smith",
             prescribedAt: "2024-01-15T10:30:00Z",
-            status: "active",
           },
           {
             id: "2",
@@ -81,7 +79,6 @@ export function PatientPrescriptions({ patientId }: PatientPrescriptionsProps) {
             instructions: "Take with meals, morning and evening",
             prescribedBy: "Dr. Smith",
             prescribedAt: "2024-01-14T14:20:00Z",
-            status: "active",
           },
           {
             id: "3",
@@ -92,7 +89,6 @@ export function PatientPrescriptions({ patientId }: PatientPrescriptionsProps) {
             instructions: "For pain relief, do not exceed 3 times daily",
             prescribedBy: "Dr. Johnson",
             prescribedAt: "2024-01-10T16:45:00Z",
-            status: "completed",
           },
         ])
       }
@@ -228,19 +224,6 @@ export function PatientPrescriptions({ patientId }: PatientPrescriptionsProps) {
     })
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800 border-green-200"
-      case "completed":
-        return "bg-blue-100 text-blue-800 border-blue-200"
-      case "discontinued":
-        return "bg-red-100 text-red-800 border-red-200"
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
-    }
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -252,7 +235,7 @@ export function PatientPrescriptions({ patientId }: PatientPrescriptionsProps) {
               Add Prescription
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="bg-white rounded-lg shadow-xl p-6 max-w-md">
             <DialogHeader>
               <DialogTitle>Add New Prescription</DialogTitle>
               <DialogDescription>Enter the prescription details for this patient.</DialogDescription>
@@ -335,11 +318,6 @@ export function PatientPrescriptions({ patientId }: PatientPrescriptionsProps) {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(prescription.status)}`}
-                    >
-                      {prescription.status.charAt(0).toUpperCase() + prescription.status.slice(1)}
-                    </span>
                     <Button
                       variant="outline"
                       size="sm"

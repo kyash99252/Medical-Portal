@@ -25,6 +25,7 @@ interface Document {
   size: number
   uploadedAt: string
   uploadedBy: string
+  fileUrl: string
 }
 
 interface PatientDocumentsProps {
@@ -51,6 +52,19 @@ export function PatientDocuments({ patientId }: PatientDocumentsProps) {
         },
       })
 
+      const data = await response.json()
+      const transformed = data.map((doc: any) => ({
+        id: doc.id.toString(),
+        name: doc.file_name,
+        type: doc.mime_type,
+        size: doc.size,
+        uploadedAt: doc.uploaded_at,
+        uploadedBy: "System", // fallback value
+        fileUrl: doc.file_url, // ⬅️ save Cloudinary link for download/preview
+      }))
+
+      setDocuments(transformed)
+
       if (response.ok) {
         const data = await response.json()
         setDocuments(data)
@@ -64,6 +78,7 @@ export function PatientDocuments({ patientId }: PatientDocumentsProps) {
             size: 245760,
             uploadedAt: "2024-01-15T10:30:00Z",
             uploadedBy: "Dr. Smith",
+            fileUrl: ""
           },
           {
             id: "2",
@@ -72,6 +87,7 @@ export function PatientDocuments({ patientId }: PatientDocumentsProps) {
             size: 1048576,
             uploadedAt: "2024-01-14T14:20:00Z",
             uploadedBy: "Nurse Johnson",
+            fileUrl: ""
           },
           {
             id: "3",
@@ -80,6 +96,7 @@ export function PatientDocuments({ patientId }: PatientDocumentsProps) {
             size: 102400,
             uploadedAt: "2024-01-13T09:15:00Z",
             uploadedBy: "Reception",
+            fileUrl: ""
           },
         ])
       }
@@ -108,7 +125,7 @@ export function PatientDocuments({ patientId }: PatientDocumentsProps) {
     try {
       const token = localStorage.getItem("token")
       const uploadFormData = new FormData()
-      uploadFormData.append("file", file)
+      uploadFormData.append("document", file)
 
       const response = await fetch(`http://localhost:8080/api/v1/patients/${patientId}/documents`, {
         method: "POST",
@@ -171,15 +188,12 @@ export function PatientDocuments({ patientId }: PatientDocumentsProps) {
 
   const handlePrint = (document: Document) => {
     // In a real app, this would open the document in a new window for printing
-    window.open(`/api/documents/${document.id}/print`, "_blank")
+    window.open(document.fileUrl, "_blank")
   }
 
   const handleDownload = (document: Document) => {
     // In a real app, this would trigger a download
-    const link = document.createElement("a")
-    link.href = `/api/documents/${document.id}/download`
-    link.download = document.name
-    link.click()
+    window.open(document.fileUrl, "_blank")
   }
 
   const formatFileSize = (bytes: number) => {
@@ -201,9 +215,6 @@ export function PatientDocuments({ patientId }: PatientDocumentsProps) {
   }
 
   const getFileIcon = (type: string) => {
-    if (type.includes("pdf")) return "📄"
-    if (type.includes("image")) return "🖼️"
-    if (type.includes("word")) return "📝"
     return "📁"
   }
 
@@ -218,7 +229,7 @@ export function PatientDocuments({ patientId }: PatientDocumentsProps) {
               Upload Document
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="bg-white rounded-lg shadow-xl p-6">
             <DialogHeader>
               <DialogTitle>Upload New Document</DialogTitle>
               <DialogDescription>Select a file to upload to this patient's record.</DialogDescription>

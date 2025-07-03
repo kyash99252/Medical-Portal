@@ -45,7 +45,7 @@ func (r *postgresRepository) GetByID(ctx context.Context, id int) (*Document, er
 
 func (r *postgresRepository) GetByPatientID(ctx context.Context, patientID int) ([]Document, error) {
 	var docs []Document
-	query := `SELECT id, patient_id, file_name, file_url, mime_type, uploaded_at FROM patient_documents WHERE patient_id = $1 ORDER BY uploaded_by DESC`
+	query := `SELECT id, patient_id, file_name, file_url, mime_type, uploaded_at FROM patient_documents WHERE patient_id = $1`
 	err := r.db.SelectContext(ctx, &docs, query, patientID)
 	return docs, err
 }
