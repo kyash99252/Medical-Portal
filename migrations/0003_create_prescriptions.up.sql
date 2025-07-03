@@ -6,7 +6,7 @@ CREATE TABLE prescriptions (
     dosage VARCHAR(100) NOT NULL,
     frequency VARCHAR(100) NOT NULL,
     notes TEXT,
-    created_at TIMESTAMPZ NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     CONSTRAINT fk_patient FOREIGN KEY(patient_id) REFERENCES patients(id) ON DELETE CASCADE,
     CONSTRAINT fk_doctor FOREIGN KEY(doctor_id) REFERENCES users(id) ON DELETE SET NULL
 );

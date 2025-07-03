@@ -9,11 +9,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/golang-migrate/migrate/v4"
 	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/golang-migrate/migrate/v4"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
@@ -24,7 +25,7 @@ import (
 	"github.com/kyash99252/Medical-Portal/internal/prescription"
 	"github.com/kyash99252/Medical-Portal/pkg/config"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	_ "gb.com/lib/pithuq"
+	_ "github.com/lib/pq"
 )
 
 // @title           Receptionist & Doctor Portal API
@@ -56,7 +57,7 @@ func main() {
 	// Run Migrations
 	runMigrations(cfg.DatabaseURL)
 
-	// Initialize Database connection
+	// Initialize DB connection
 	db, err := sqlx.Connect("postgres", cfg.DatabaseURL)
 	if err != nil {
 		log.Fatalf("Could not connect to the database: %v", err)
@@ -73,6 +74,16 @@ func main() {
 
 	// Initialize Router
 	router := gin.Default()
+
+	// 🔥 Enable CORS (allow frontend access)
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// Serve frontend
 	router.Static("/web", "./web")
@@ -91,31 +102,31 @@ func main() {
 	// API v1 Group
 	v1 := router.Group("/api/v1")
 	{
-		// --- Repositories ---
+		// Repositories
 		userRepo := auth.NewPostgresRepository(db)
 		patientRepo := patient.NewPostgresRepository(db)
 		docRepo := document.NewPostgresRepository(db)
 		prescriptionRepo := prescription.NewPostgresRepository(db)
 
-		// --- Services ---
+		// Services
 		authSvc := auth.NewService(userRepo, cfg.JWTSecretKey)
 		patientSvc := patient.NewService(patientRepo)
 		docSvc := document.NewService(docRepo, cld)
 		prescriptionSvc := prescription.NewService(prescriptionRepo)
 
-		// --- Handlers ---
+		// Handlers
 		authHandler := auth.NewHandler(authSvc)
 		patientHandler := patient.NewHandler(patientSvc)
 		docHandler := document.NewHandler(docSvc)
 		prescriptionHandler := prescription.NewHandler(prescriptionSvc)
 
-		// --- Routes ---
+		// Routes
 		v1.POST("/login", authHandler.Login)
-		
+
 		authRoutes := v1.Group("/")
 		authRoutes.Use(middleware.AuthMiddleware(cfg.JWTSecretKey))
 		{
-			// Patient routes (permissions already set up)
+			// Patient routes
 			p := authRoutes.Group("/patients")
 			{
 				p.POST("", middleware.RoleMiddleware("receptionist"), patientHandler.CreatePatient)
@@ -125,32 +136,32 @@ func main() {
 				p.PATCH("/:id/medical", middleware.RoleMiddleware("doctor"), patientHandler.UpdatePatientMedical)
 				p.DELETE("/:id", middleware.RoleMiddleware("receptionist"), patientHandler.DeletePatient)
 
-				// Prescription Routes
+				// Prescription
 				p.POST("/:id/prescriptions", middleware.RoleMiddleware("doctor"), prescriptionHandler.CreatePrescription)
 				p.GET("/:id/prescriptions", middleware.RoleMiddleware("receptionist", "doctor"), prescriptionHandler.GetPatientPrescriptions)
-				
-				// Document Routes
+
+				// Documents
 				p.POST("/:id/documents", middleware.RoleMiddleware("receptionist", "doctor"), docHandler.UploadDocument)
 				p.GET("/:id/documents", middleware.RoleMiddleware("receptionist", "doctor"), docHandler.GetPatientDocuments)
 			}
-			
-			// Standalone Document Deletion
+
+			// Standalone doc deletion
 			authRoutes.DELETE("/documents/:doc_id", middleware.RoleMiddleware("receptionist"), docHandler.DeleteDocument)
 		}
 	}
 
-	// Create HTTP server
+	// HTTP server
 	srv := &http.Server{
-		Addr: ":" + cfg.Port,
+		Addr:    ":" + cfg.Port,
 		Handler: router,
 	}
 
-	// Start server in a goroutine
+	// Start server
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
 		}
-	} ()
+	}()
 
 	// Graceful shutdown
 	quit := make(chan os.Signal, 1)
@@ -158,7 +169,7 @@ func main() {
 	<-quit
 	log.Println("Shutting down server...")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5 *time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {

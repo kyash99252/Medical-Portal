@@ -33,7 +33,9 @@ services:
       GIN_MODE: ${GIN_MODE}
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-    command: sh -c "migrate -path /migrations -database $DATABASE_URL up && /Medical-Portal"
+      CLOUDINARY_URL: ${CLOUDINARY_URL}
+    env_file:
+      - .env
 
 volumes:
   postgres-data: {}

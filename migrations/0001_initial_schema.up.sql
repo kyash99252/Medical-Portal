@@ -12,15 +12,15 @@ CREATE TABLE patients (
     phone_number VARCHAR(25),
     address TEXT NOT NULL,
     diagnosis TEXT,
-    notes TEXT.
-    created_at TIMESTAMPZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPZ NOT NULL DEFAULT NOW()
+    notes TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.updated_at = NOW()
+    NEW.updated_at = NOW();
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -33,8 +33,8 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 -- Seed initial users
 -- Password for both is 'password123'
 INSERT INTO users (username, password_hash, role) VALUES
-('receptionist', '$2a$14$zR2l6wsT2zHqUaKAGg9hke2YdprcAjYjXh9ZgTdyYVpHEwVd37k3u', 'receptionist'),
-('doctor', '$2a$14$zR2l6wsT2zHqUaKAGg9hke2YdprcAjYjXh9ZgTdyYVpHEwVd37k3u', 'doctor');
+('receptionist', '$2y$10$T1idEec.BiY/4j2fvrXUZ.sOFufq9HF2TfJuAvk84o3X6MZ8PGoA6', 'receptionist'),
+('doctor', '$2y$10$T1idEec.BiY/4j2fvrXUZ.sOFufq9HF2TfJuAvk84o3X6MZ8PGoA6', 'doctor');
 
 INSERT INTO patients (name, age, address, phone_number) VALUES
 ('John Doe', 45, '123 Main St, Anytown, USA', '123456789'),

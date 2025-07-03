@@ -1,3 +1,8 @@
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
+
 # Default Go binary name
 BINARY_NAME=Medical-Portal
 
@@ -53,15 +58,13 @@ test-integration:
 	@echo "Stopping services..."
 	@docker-compose down
 
-# Apply all up migrations
 migrate-up:
-	@echo "Applying migrations..."
-	@migrate -path /migrations -database "${DATABASE_URL}" up
+	@echo "Applying migrations via Docker..."
+	@docker-compose --env-file ./.env exec -T app migrate -path /migrations -database "$$DATABASE_URL" up
 
-# Rollback the last migration
 migrate-down:
-	@echo "Rolling back last migration..."
-	@migrate -path ./migrations -database "${DATABASE_URL}" down
+	@echo "Rolling back last migration via Docker..."
+	@docker-compose --env-file ./.env exec -T app migrate -path /migrations -database "$$DATABASE_URL" down
 
 # Run the application using Docker Compose
 docker-run:
