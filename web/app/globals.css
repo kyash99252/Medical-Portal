@@ -3,49 +3,54 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 255 255 255;
-    --foreground: 15 23 42;
-    --card: 255 255 255;
-    --card-foreground: 15 23 42;
-    --popover: 255 255 255;
-    --popover-foreground: 15 23 42;
-    --primary: 37 99 235;
-    --primary-foreground: 248 250 252;
-    --secondary: 241 245 249;
-    --secondary-foreground: 15 23 42;
-    --muted: 248 250 252;
-    --muted-foreground: 100 116 139;
-    --accent: 241 245 249;
-    --accent-foreground: 15 23 42;
-    --destructive: 239 68 68;
-    --destructive-foreground: 248 250 252;
-    --border: 226 232 240;
-    --input: 226 232 240;
-    --ring: 37 99 235;
-    --radius: 0.75rem;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-slate-50 text-foreground font-sans;
+    @apply bg-background text-foreground;
   }
 }
 
-@layer components {
-  .gradient-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
   }
 
-  .card-shadow {
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  .print-only {
+    display: block !important;
   }
 
-  .card-shadow-lg {
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  body {
+    @apply bg-white text-black;
   }
+
+  .print-page {
+    page-break-after: always;
+  }
+
+  .print-header {
+    @apply text-2xl font-bold mb-4 text-center border-b-2 border-gray-300 pb-2;
+  }
+
+  .print-section {
+    @apply mb-6;
+  }
+
+  .print-field {
+    @apply mb-2 flex;
+  }
+
+  .print-label {
+    @apply font-semibold w-32 flex-shrink-0;
+  }
+
+  .print-value {
+    @apply flex-1;
+  }
+}
+
+/* Custom gradient button variant */
+.btn-gradient {
+  @apply bg-gradient-to-r from-teal-400 via-teal-500 to-emerald-500 text-white hover:from-teal-500 hover:via-teal-600 hover:to-emerald-600 transition-all duration-200;
 }
