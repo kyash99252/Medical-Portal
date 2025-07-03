@@ -12,6 +12,7 @@ import (
 // ContextKeyUser is the key for the user role in the context
 const (
 	ContextKeyUserRole = "userRole"
+	ContextKeyUserID   = "userID"
 )
 
 // AuthMiddleware creates a gin middleware for JWT authentication
@@ -44,6 +45,9 @@ func AuthMiddleware(secretKey string) gin.HandlerFunc {
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			c.Set(ContextKeyUserRole, claims["role"])
+			if userIDFloat, ok := claims["sub"].(float64); ok {
+				c.Set(ContextKeyUserID, int(userIDFloat))
+			}
 			c.Next()
 		} else {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
