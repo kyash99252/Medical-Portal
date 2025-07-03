@@ -27,6 +27,10 @@ type LoginResponse struct {
 	Token string `json:"token"`
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // Login godoc
 // @Summary      User Login
 // @Description  Logs in a user and returns a JWT token.
@@ -35,9 +39,9 @@ type LoginResponse struct {
 // @Produce      json
 // @Param        credentials body LoginRequest true "Login Credentials"
 // @Success      200 {object} LoginResponse
-// @Failure      400 {object} gin.H "Invalid request body"
-// @Failure      401 {object} gin.H "Invalid credentials"
-// @Failure      500 {object} gin.H "Internal server error"
+// @Failure      400 {object} ErrorResponse "Invalid request body"
+// @Failure      401 {object} ErrorResponse "Invalid credentials"
+// @Failure      500 {object} ErrorResponse "Internal server error"
 // @Router       /login [post]
 func (h *Handler) Login(c *gin.Context) {
 	var req LoginRequest

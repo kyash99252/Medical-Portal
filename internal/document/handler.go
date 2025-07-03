@@ -16,6 +16,10 @@ func NewHandler(s Service) *Handler {
 	return &Handler{service: s}
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // UploadDocument godoc
 // @Summary      Upload a document for a patient
 // @Description  Uploads a file (pdf, jpg, etc.) associated with a patient.
@@ -26,8 +30,8 @@ func NewHandler(s Service) *Handler {
 // @Param        id   path      int  true  "Patient ID"
 // @Param        document formData file true "The document to upload"
 // @Success      201 {object} Document
-// @Failure      400 {object} gin.H "Bad request"
-// @Failure      500 {object} gin.H "Internal server error"
+// @Failure      400 {object} ErrorResponse "Bad request"
+// @Failure      500 {object} ErrorResponse "Internal server error"
 // @Router       /patients/{id}/documents [post]
 func (h *Handler) UploadDocument(c *gin.Context) {
 	patientID, err := strconv.Atoi(c.Param("id"))
@@ -51,7 +55,7 @@ func (h *Handler) UploadDocument(c *gin.Context) {
 	c.JSON(http.StatusCreated, doc)
 }
 
-// GetPatientDocuments godoc
+// GetPatientDocuments 
 // @Summary      List documents for a patient
 // @Description  Retrieves a list of all documents for a specific patient.
 // @Tags         Documents
@@ -59,8 +63,8 @@ func (h *Handler) UploadDocument(c *gin.Context) {
 // @Security     ApiKeyAuth
 // @Param        id   path      int  true  "Patient ID"
 // @Success      200  {array}   Document
-// @Failure      400  {object}  gin.H "Invalid patient ID"
-// @Failure      500  {object}  gin.H "Internal server error"
+// @Failure      400  {object}  ErrorResponse "Invalid patient ID"
+// @Failure      500  {object}  ErrorResponse "Internal server error"
 // @Router       /patients/{id}/documents [get]
 func (h *Handler) GetPatientDocuments(c *gin.Context) {
 	patientID, err := strconv.Atoi(c.Param("id"))
@@ -85,8 +89,8 @@ func (h *Handler) GetPatientDocuments(c *gin.Context) {
 // @Security     ApiKeyAuth
 // @Param        doc_id   path      int  true  "Document ID"
 // @Success      204  {object}  nil
-// @Failure      400  {object}  gin.H "Invalid document ID"
-// @Failure      404  {object}  gin.H "Document not found"
+// @Failure      400  {object}  ErrorResponse "Invalid document ID"
+// @Failure      404  {object}  ErrorResponse "Document not found"
 // @Router       /documents/{doc_id} [delete]
 func (h *Handler) DeleteDocument(c *gin.Context) {
 	docID, err := strconv.Atoi(c.Param("doc_id"))

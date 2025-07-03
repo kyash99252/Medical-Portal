@@ -18,6 +18,10 @@ func NewHandler(s Service) *Handler {
 	return &Handler{service: s}
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // CreatePatient godoc
 // @Summary      Create a patient
 // @Description  Adds a new patient to the system.
@@ -27,9 +31,9 @@ func NewHandler(s Service) *Handler {
 // @Security     ApiKeyAuth
 // @Param        patient body CreatePatientRequest true "Patient data"
 // @Success      201 {object} Patient
-// @Failure      400 {object} gin.H "Invalid request body"
-// @Failure      403 {object} gin.H "Forbidden"
-// @Failure      500 {object} gin.H "Internal server error"
+// @Failure      400 {object} ErrorResponse "Invalid request body"
+// @Failure      403 {object} ErrorResponse "Forbidden"
+// @Failure      500 {object} ErrorResponse "Internal server error"
 // @Router       /patients [post]
 func (h *Handler) CreatePatient(c *gin.Context) {
 	var req CreatePatientRequest
@@ -55,9 +59,9 @@ func (h *Handler) CreatePatient(c *gin.Context) {
 // @Security     ApiKeyAuth
 // @Param        id   path      int  true  "Patient ID"
 // @Success      200  {object}  Patient
-// @Failure      400  {object}  gin.H "Invalid patient ID"
-// @Failure      403  {object}  gin.H "Forbidden"
-// @Failure      404  {object}  gin.H "Patient not found"
+// @Failure      400  {object}  ErrorResponse "Invalid patient ID"
+// @Failure      403  {object}  ErrorResponse "Forbidden"
+// @Failure      404  {object}  ErrorResponse "Patient not found"
 // @Router       /patients/{id} [get]
 func (h *Handler) GetPatient(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -86,8 +90,8 @@ func (h *Handler) GetPatient(c *gin.Context) {
 // @Produce      json
 // @Security     ApiKeyAuth
 // @Success      200  {array}   Patient
-// @Failure      403  {object}  gin.H "Forbidden"
-// @Failure      500  {object}  gin.H "Internal server error"
+// @Failure      403  {object}  ErrorResponse "Forbidden"
+// @Failure      500  {object}  ErrorResponse "Internal server error"
 // @Router       /patients [get]
 func (h *Handler) ListPatients(c *gin.Context) {
 	patients, err := h.service.ListAllPatients(c.Request.Context())
@@ -108,9 +112,9 @@ func (h *Handler) ListPatients(c *gin.Context) {
 // @Param        id      path      int                  true  "Patient ID"
 // @Param        patient body      UpdatePatientRequest true  "Patient data"
 // @Success      200     {object}  Patient
-// @Failure      400     {object}  gin.H "Invalid request body or ID"
-// @Failure      403     {object}  gin.H "Forbidden"
-// @Failure      404     {object}  gin.H "Patient not found"
+// @Failure      400     {object}  ErrorResponse "Invalid request body or ID"
+// @Failure      403     {object}  ErrorResponse "Forbidden"
+// @Failure      404     {object}  ErrorResponse "Patient not found"
 // @Router       /patients/{id} [put]
 func (h *Handler) UpdatePatient(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -148,9 +152,9 @@ func (h *Handler) UpdatePatient(c *gin.Context) {
 // @Param        id      path      int                  true  "Patient ID"
 // @Param        patient body      UpdatePatientMedicalRequest true  "Patient medical data"
 // @Success      200     {object}  Patient
-// @Failure      400     {object}  gin.H "Invalid request body or ID"
-// @Failure      403     {object}  gin.H "Forbidden"
-// @Failure      404     {object}  gin.H "Patient not found"
+// @Failure      400     {object}  ErrorResponse "Invalid request body or ID"
+// @Failure      403     {object}  ErrorResponse "Forbidden"
+// @Failure      404     {object}  ErrorResponse "Patient not found"
 // @Router       /patients/{id}/medical [patch]
 func (h *Handler) UpdatePatientMedical(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -185,9 +189,9 @@ func (h *Handler) UpdatePatientMedical(c *gin.Context) {
 // @Security     ApiKeyAuth
 // @Param        id   path      int  true  "Patient ID"
 // @Success      204  {object}  nil
-// @Failure      400  {object}  gin.H "Invalid patient ID"
-// @Failure      403  {object}  gin.H "Forbidden"
-// @Failure      404  {object}  gin.H "Patient not found"
+// @Failure      400  {object}  ErrorResponse "Invalid patient ID"
+// @Failure      403  {object}  ErrorResponse "Forbidden"
+// @Failure      404  {object}  ErrorResponse "Patient not found"
 // @Router       /patients/{id} [delete]
 func (h *Handler) DeletePatient(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -217,8 +221,8 @@ func (h *Handler) DeletePatient(c *gin.Context) {
 // @Security     ApiKeyAuth
 // @Param        q   query      string  true  "Search query"
 // @Success      200  {array}   Patient
-// @Failure      400  {object}  gin.H "Query parameter 'q' is required"
-// @Failure      403  {object}  gin.H "Forbidden"
+// @Failure      400  {object}  ErrorResponse "Query parameter 'q' is required"
+// @Failure      403  {object}  ErrorResponse "Forbidden"
 // @Router       /patients/search [get]
 func (h *Handler) SearchPatients(c *gin.Context) {
 	query := c.Query("q")

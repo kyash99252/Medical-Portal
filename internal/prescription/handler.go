@@ -18,6 +18,10 @@ func NewHandler(s Service) *Handler {
 	return &Handler{service: s}
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // CreatePrescription godoc
 // @Summary      Create a prescription (Doctor only)
 // @Description  Creates a new prescription for a patient. The doctor's ID is automatically taken from the JWT token.
@@ -28,9 +32,9 @@ func NewHandler(s Service) *Handler {
 // @Param        id   path      int  true  "Patient ID"
 // @Param        prescription body CreateRequest true "Prescription details"
 // @Success      201 {object} Prescription
-// @Failure      400 {object} gin.H "Bad request due to invalid patient ID or request body"
-// @Failure      403 {object} gin.H "Forbidden if user is not a doctor or token is invalid"
-// @Failure      500 {object} gin.H "Internal server error"
+// @Failure      400 {object} ErrorResponse "Bad request due to invalid patient ID or request body"
+// @Failure      403 {object} ErrorResponse "Forbidden if user is not a doctor or token is invalid"
+// @Failure      500 {object} ErrorResponse "Internal server error"
 // @Router       /patients/{id}/prescriptions [post]
 func (h *Handler) CreatePrescription(c *gin.Context) {
 	patientID, err := strconv.Atoi(c.Param("id"))
@@ -74,8 +78,8 @@ func (h *Handler) CreatePrescription(c *gin.Context) {
 // @Security     ApiKeyAuth
 // @Param        id   path      int  true  "Patient ID"
 // @Success      200  {array}   Prescription
-// @Failure      400  {object}  gin.H "Invalid patient ID"
-// @Failure      500  {object}  gin.H "Internal server error"
+// @Failure      400  {object}  ErrorResponse "Invalid patient ID"
+// @Failure      500  {object}  ErrorResponse "Internal server error"
 // @Router       /patients/{id}/prescriptions [get]
 func (h *Handler) GetPatientPrescriptions(c *gin.Context) {
 	patientID, err := strconv.Atoi(c.Param("id"))

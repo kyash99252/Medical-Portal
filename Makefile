@@ -56,7 +56,7 @@ test-integration:
 # Apply all up migrations
 migrate-up:
 	@echo "Applying migrations..."
-	@migrate -path ./migrations -database "${DATABASE_URL}" up
+	@migrate -path /migrations -database "${DATABASE_URL}" up
 
 # Rollback the last migration
 migrate-down:
