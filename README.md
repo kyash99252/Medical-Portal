@@ -80,6 +80,20 @@ A modern, role-based hospital management system built with **Golang (Gin)** and 
 
 ---
 
+## 🎥 Demo
+
+See the Medical Portal in action:
+
+[![Demo Video](https://img.shields.io/badge/Demo-Video-blue?logo=video)](./assets/demo.mp4)
+
+📂 File path: `assets/demo.mp4`
+
+> _Click the badge above to watch the demo video._
+
+---
+
+---
+
 ## ⚡ Setup & Installation
 
 ### 1. Prerequisites
