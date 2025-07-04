@@ -25,7 +25,7 @@ export default function NewPatientPage() {
     const patientData = {
       name: formData.get("name") as string,
       age: Number.parseInt(formData.get("age") as string),
-      phone: formData.get("phone") as string,
+      phone_number: formData.get("phone") as string,
       email: formData.get("email") as string,
       address: formData.get("address") as string,
       bloodType: formData.get("bloodType") as string,

@@ -13,10 +13,10 @@ interface Patient {
   id: string
   name: string
   age: number
-  phone: string
+  phone_number: string
   email: string
   diagnosis: string
-  createdAt: string
+  created_at: string
 }
 
 interface PatientTableProps {
@@ -72,7 +72,13 @@ export function PatientTable({ patients, loading, onRefresh }: PatientTableProps
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    if (!dateString) return "N/A"
+    const normalized = dateString.replace(" ", "T")
+
+    const date = new Date(normalized)
+    if (isNaN(date.getTime())) return "Invalid Date"
+
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -143,7 +149,7 @@ export function PatientTable({ patients, loading, onRefresh }: PatientTableProps
                     <div className="space-y-1">
                       <div className="flex items-center space-x-1 text-sm">
                         <Phone className="h-3 w-3" />
-                        <span>{patient.phone}</span>
+                        <span>{patient.phone_number}</span>
                       </div>
                       <div className="flex items-center space-x-1 text-sm">
                         <Mail className="h-3 w-3" />
@@ -156,7 +162,7 @@ export function PatientTable({ patients, loading, onRefresh }: PatientTableProps
                       {patient.diagnosis}
                     </div>
                   </TableCell>
-                  <TableCell className="text-slate-600">{formatDate(patient.createdAt)}</TableCell>
+                  <TableCell className="text-slate-600">{formatDate(patient.created_at)}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>

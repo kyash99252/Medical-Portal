@@ -3,12 +3,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Printer, Edit } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface Patient {
   id: string
   name: string
   age: number
-  phone: string
+  phone_number: string
   email: string
   address: string
   diagnosis: string
@@ -23,6 +24,7 @@ interface PatientDetailsProps {
 }
 
 export function PatientDetails({ patient }: PatientDetailsProps) {
+  const router = useRouter()
   const handlePrint = () => {
     window.print()
   }
@@ -40,7 +42,7 @@ export function PatientDetails({ patient }: PatientDetailsProps) {
   const fields = [
     { label: "Full Name", value: patient.name },
     { label: "Age", value: `${patient.age} years` },
-    { label: "Phone", value: patient.phone },
+    { label: "Phone", value: patient.phone_number },
     { label: "Email", value: patient.email },
     { label: "Address", value: patient.address },
     { label: "Blood Type", value: patient.bloodType },
@@ -72,7 +74,7 @@ export function PatientDetails({ patient }: PatientDetailsProps) {
             <Printer className="mr-2 h-4 w-4" />
             Print Details
           </Button>
-          <Button className="btn-gradient">
+          <Button onClick={() => router.push(`/patients/${patient.id}/edit`)} className="btn-gradient">
             <Edit className="mr-2 h-4 w-4" />
             Edit Patient
           </Button>

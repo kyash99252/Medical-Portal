@@ -11,10 +11,10 @@ interface Patient {
   id: string
   name: string
   age: number
-  phone: string
+  phone_number: string
   email: string
   diagnosis: string
-  createdAt: string
+  created_at: string
 }
 
 export default function PatientsPage() {
@@ -38,6 +38,7 @@ export default function PatientsPage() {
 
       if (response.ok) {
         const data = await response.json()
+        console.log(data)
         setPatients(data)
       } else {
         // Mock data for demo
@@ -46,28 +47,28 @@ export default function PatientsPage() {
             id: "1",
             name: "John Smith",
             age: 45,
-            phone: "+1-555-0123",
+            phone_number: "+1-555-0123",
             email: "john.smith@email.com",
             diagnosis: "Hypertension, Type 2 Diabetes",
-            createdAt: "2024-01-15T10:30:00Z",
+            created_at: "2024-01-15T10:30:00Z",
           },
           {
             id: "2",
             name: "Sarah Johnson",
             age: 32,
-            phone: "+1-555-0124",
+            phone_number: "+1-555-0124",
             email: "sarah.j@email.com",
             diagnosis: "Migraine, Anxiety",
-            createdAt: "2024-01-14T14:20:00Z",
+            created_at: "2024-01-14T14:20:00Z",
           },
           {
             id: "3",
             name: "Michael Brown",
             age: 28,
-            phone: "+1-555-0125",
+            phone_number: "+1-555-0125",
             email: "mike.brown@email.com",
             diagnosis: "Asthma",
-            createdAt: "2024-01-13T09:15:00Z",
+            created_at: "2024-01-13T09:15:00Z",
           },
         ])
       }
@@ -81,7 +82,7 @@ export default function PatientsPage() {
   const filteredPatients = patients.filter(
     (patient) =>
       patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.phone.includes(searchTerm) ||
+      patient.phone_number.includes(searchTerm) ||
       patient.diagnosis.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 

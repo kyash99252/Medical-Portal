@@ -132,8 +132,8 @@ func main() {
 				p.POST("", middleware.RoleMiddleware("receptionist"), patientHandler.CreatePatient)
 				p.GET("", middleware.RoleMiddleware("receptionist", "doctor"), patientHandler.ListPatients)
 				p.GET("/:id", middleware.RoleMiddleware("receptionist", "doctor"), patientHandler.GetPatient)
-				p.PUT("/:id", middleware.RoleMiddleware("receptionist"), patientHandler.UpdatePatient)
-				p.PATCH("/:id/medical", middleware.RoleMiddleware("doctor"), patientHandler.UpdatePatientMedical)
+				p.PUT("/:id", middleware.RoleMiddleware("receptionist", "doctor"), patientHandler.UpdatePatient)
+				p.PATCH("/:id/medical", middleware.RoleMiddleware("receptionist", "doctor"), patientHandler.UpdatePatientMedical)
 				p.DELETE("/:id", middleware.RoleMiddleware("receptionist"), patientHandler.DeletePatient)
 
 				// Prescription
