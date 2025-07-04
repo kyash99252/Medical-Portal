@@ -56,7 +56,19 @@ export function PatientPrescriptions({ patientId }: PatientPrescriptionsProps) {
 
       if (response.ok) {
         const data = await response.json()
-        setPrescriptions(data)
+
+        const mapped = data.map((item: any): Prescription => ({
+          id: item.id.toString(),
+          medication: item.medication,
+          dosage: item.dosage,
+          frequency: item.frequency,
+          duration: item.duration || "N/A",
+          instructions: item.instructions || "",
+          prescribedBy: `Dr. ID ${item.doctor_id}`,
+          prescribedAt: item.created_at,
+        }))
+
+        setPrescriptions(mapped)
       } else {
         // Mock data for demo
         setPrescriptions([

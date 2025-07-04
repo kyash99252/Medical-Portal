@@ -31,7 +31,7 @@ export default function DashboardPage() {
           },
         })
 
-        if (response.ok) {
+        if (!response.ok) {
           const data = await response.json()
           setStats(data)
         }
@@ -39,10 +39,10 @@ export default function DashboardPage() {
         console.error("Failed to fetch dashboard stats:", error)
         // Set mock data for demo
         setStats({
-          totalPatients: 247,
-          todayAppointments: 12,
-          pendingDocuments: 8,
-          activePrescriptions: 34,
+          totalPatients: 3,
+          todayAppointments: 0,
+          pendingDocuments: 2,
+          activePrescriptions: 1,
         })
       }
     }

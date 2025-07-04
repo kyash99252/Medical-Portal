@@ -1,0 +1,596 @@
+basePath: /api/v1
+definitions:
+  auth.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  auth.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.LoginResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  document.Document:
+    properties:
+      file_name:
+        type: string
+      file_url:
+        type: string
+      id:
+        type: integer
+      mime_type:
+        type: string
+      patient_id:
+        type: integer
+      uploaded_at:
+        type: string
+    type: object
+  document.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  patient.CreatePatientRequest:
+    properties:
+      address:
+        type: string
+      age:
+        type: integer
+      name:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - address
+    - age
+    - name
+    type: object
+  patient.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  patient.Patient:
+    properties:
+      address:
+        type: string
+      age:
+        type: integer
+      created_at:
+        type: string
+      diagnosis:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      notes:
+        type: string
+      phone_number:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  patient.UpdatePatientMedicalRequest:
+    properties:
+      diagnosis:
+        type: string
+      notes:
+        type: string
+    required:
+    - diagnosis
+    type: object
+  patient.UpdatePatientRequest:
+    properties:
+      address:
+        type: string
+      age:
+        type: integer
+      name:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - address
+    - age
+    - name
+    type: object
+  prescription.CreateRequest:
+    properties:
+      dosage:
+        type: string
+      frequency:
+        type: string
+      medication:
+        type: string
+      notes:
+        type: string
+    required:
+    - dosage
+    - frequency
+    - medication
+    type: object
+  prescription.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  prescription.Prescription:
+    properties:
+      created_at:
+        type: string
+      doctor_id:
+        type: integer
+      dosage:
+        type: string
+      frequency:
+        type: string
+      id:
+        type: integer
+      medication:
+        type: string
+      notes:
+        type: string
+      patient_id:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server for a receptionist and doctor portal.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Receptionist & Doctor Portal API
+  version: "1.0"
+paths:
+  /documents/{doc_id}:
+    delete:
+      description: Deletes a document from the system and cloud storage.
+      parameters:
+      - description: Document ID
+        in: path
+        name: doc_id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid document ID
+          schema:
+            $ref: '#/definitions/document.ErrorResponse'
+        "404":
+          description: Document not found
+          schema:
+            $ref: '#/definitions/document.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a document
+      tags:
+      - Documents
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Logs in a user and returns a JWT token.
+      parameters:
+      - description: Login Credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.LoginResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "401":
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: User Login
+      tags:
+      - Auth
+  /patients:
+    get:
+      description: Retrieves a list of all patients in the system.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/patient.Patient'
+            type: array
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: List all patients
+      tags:
+      - Patients
+    post:
+      consumes:
+      - application/json
+      description: Adds a new patient to the system.
+      parameters:
+      - description: Patient data
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/patient.CreatePatientRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/patient.Patient'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a patient
+      tags:
+      - Patients
+  /patients/{id}:
+    delete:
+      description: Deletes a patient from the system.
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid patient ID
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "404":
+          description: Patient not found
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a patient
+      tags:
+      - Patients
+    get:
+      description: Retrieves a single patient's details.
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/patient.Patient'
+        "400":
+          description: Invalid patient ID
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "404":
+          description: Patient not found
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a patient by ID
+      tags:
+      - Patients
+    put:
+      consumes:
+      - application/json
+      description: Updates a patient's non-medical information.
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Patient data
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/patient.UpdatePatientRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/patient.Patient'
+        "400":
+          description: Invalid request body or ID
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "404":
+          description: Patient not found
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a patient
+      tags:
+      - Patients
+  /patients/{id}/documents:
+    get:
+      description: Retrieves a list of all documents for a specific patient.
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/document.Document'
+            type: array
+        "400":
+          description: Invalid patient ID
+          schema:
+            $ref: '#/definitions/document.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/document.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: List documents for a patient
+      tags:
+      - Documents
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads a file (pdf, jpg, etc.) associated with a patient.
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: The document to upload
+        in: formData
+        name: document
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/document.Document'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/document.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/document.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Upload a document for a patient
+      tags:
+      - Documents
+  /patients/{id}/medical:
+    patch:
+      consumes:
+      - application/json
+      description: Updates a patient's diagnosis and notes.
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Patient medical data
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/patient.UpdatePatientMedicalRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/patient.Patient'
+        "400":
+          description: Invalid request body or ID
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "404":
+          description: Patient not found
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update patient's medical info (Doctor only)
+      tags:
+      - Patients
+  /patients/{id}/prescriptions:
+    get:
+      description: Retrieves a list of all prescriptions for a specific patient.
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/prescription.Prescription'
+            type: array
+        "400":
+          description: Invalid patient ID
+          schema:
+            $ref: '#/definitions/prescription.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/prescription.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: List prescriptions for a patient
+      tags:
+      - Prescriptions
+    post:
+      consumes:
+      - application/json
+      description: Creates a new prescription for a patient. The doctor's ID is automatically
+        taken from the JWT token.
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Prescription details
+        in: body
+        name: prescription
+        required: true
+        schema:
+          $ref: '#/definitions/prescription.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/prescription.Prescription'
+        "400":
+          description: Bad request due to invalid patient ID or request body
+          schema:
+            $ref: '#/definitions/prescription.ErrorResponse'
+        "403":
+          description: Forbidden if user is not a doctor or token is invalid
+          schema:
+            $ref: '#/definitions/prescription.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/prescription.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a prescription (Doctor only)
+      tags:
+      - Prescriptions
+  /patients/search:
+    get:
+      description: Searches for patients by name (case-insensitive).
+      parameters:
+      - description: Search query
+        in: query
+        name: q
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/patient.Patient'
+            type: array
+        "400":
+          description: Query parameter 'q' is required
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/patient.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Search for patients
+      tags:
+      - Patients
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
