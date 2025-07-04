@@ -190,8 +190,6 @@ pnpm dev
 
 - **Test files:** Located in `tests/` (e.g., `auth_test.go`, `patient_test.go`, `integration_test.go`)
 
-> ⚠️ **Warning:** Unit and integration test coverage is **partial**. Some modules may lack comprehensive tests.
-
 ---
 
 ## 🚀 Deployment Guide
